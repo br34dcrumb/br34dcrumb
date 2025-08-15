@@ -232,23 +232,26 @@ def cache_builder(edges, comment_size, force_cache, loc_add=0, loc_del=0):
         with open(filename, 'w') as f:
             f.writelines(data)
 
-    if len(data)-comment_size != len(edges) or force_cache: # If the number of repos has changed, or force_cache is True
+    # Filter out nodes with missing nameWithOwner before proceeding
+    valid_edges = [edge for edge in edges if edge.get('node') and edge['node'].get('nameWithOwner')]
+    
+    if len(data)-comment_size != len(valid_edges) or force_cache: # If the number of repos has changed, or force_cache is True
         cached = False
-        flush_cache(edges, filename, comment_size)
+        flush_cache(valid_edges, filename, comment_size)
         with open(filename, 'r') as f:
             data = f.readlines()
 
     cache_comment = data[:comment_size] # save the comment block
     data = data[comment_size:] # remove those lines
-    for index in range(len(edges)):
+    for index in range(len(valid_edges)):
         repo_hash, commit_count, *__ = data[index].split()
-        if repo_hash == hashlib.sha256(edges[index]['node']['nameWithOwner'].encode('utf-8')).hexdigest():
+        if repo_hash == hashlib.sha256(valid_edges[index]['node']['nameWithOwner'].encode('utf-8')).hexdigest():
             try:
-                if int(commit_count) != edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']:
+                if int(commit_count) != valid_edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']:
                     # if commit count has changed, update loc for that repo
-                    owner, repo_name = edges[index]['node']['nameWithOwner'].split('/')
+                    owner, repo_name = valid_edges[index]['node']['nameWithOwner'].split('/')
                     loc = recursive_loc(owner, repo_name, data, cache_comment)
-                    data[index] = repo_hash + ' ' + str(edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']) + ' ' + str(loc[2]) + ' ' + str(loc[0]) + ' ' + str(loc[1]) + '\n'
+                    data[index] = repo_hash + ' ' + str(valid_edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']) + ' ' + str(loc[2]) + ' ' + str(loc[0]) + ' ' + str(loc[1]) + '\n'
             except TypeError: # If the repo is empty
                 data[index] = repo_hash + ' 0 0 0 0\n'
     with open(filename, 'w') as f:
@@ -273,7 +276,12 @@ def flush_cache(edges, filename, comment_size):
     with open(filename, 'w') as f:
         f.writelines(data)
         for node in edges:
-            f.write(hashlib.sha256(node['node']['nameWithOwner'].encode('utf-8')).hexdigest() + ' 0 0 0 0\n')
+            # Check if the node and nameWithOwner exist before accessing
+            if node.get('node') and node['node'].get('nameWithOwner'):
+                f.write(hashlib.sha256(node['node']['nameWithOwner'].encode('utf-8')).hexdigest() + ' 0 0 0 0\n')
+            else:
+                # Skip invalid nodes or log them for debugging
+                print(f"Warning: Skipping node with missing nameWithOwner: {node}")
 
 
 def add_archive():
@@ -312,7 +320,9 @@ def stars_counter(data):
     Count total stars in repositories owned by me
     """
     total_stars = 0
-    for node in data: total_stars += node['node']['stargazers']['totalCount']
+    for node in data: 
+        if node.get('node') and node['node'].get('stargazers'):
+            total_stars += node['node']['stargazers']['totalCount']
     return total_stars
 
 
