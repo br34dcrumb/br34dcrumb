@@ -464,9 +464,22 @@ if __name__ == '__main__':
     contrib_data, contrib_time = perf_counter(graph_repos_stars, 'repos', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
     follower_data, follower_time = perf_counter(follower_getter, USER_NAME)
 
+    # Update the README.md file with the current date
     today = datetime.datetime.now().strftime("%Y-%m-%d")
-    with open("README.md", "a", encoding="utf-8") as f:
-        f.write(f"\n<!-- Script updated on: {today} -->\n")
+    try:
+        with open("README.md", "r", encoding="utf-8") as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        lines = []
+    
+    # Check if the last line is a script update comment
+    if lines and lines[-1].strip().startswith("<!-- Script updated on:"):
+        lines[-1] = f"<!-- Script updated on: {today} -->\n"
+    else:
+        lines.append(f"\n<!-- Script updated on: {today} -->\n")
+    
+    with open("README.md", "w", encoding="utf-8") as f:
+        f.writelines(lines)
 
     for index in range(len(total_loc)-1): total_loc[index] = '{:,}'.format(total_loc[index]) # format added, deleted, and total LOC
 
