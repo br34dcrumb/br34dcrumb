@@ -233,7 +233,7 @@ def cache_builder(edges, comment_size, force_cache, loc_add=0, loc_del=0):
             f.writelines(data)
 
     # Filter out nodes with missing nameWithOwner before proceeding
-    valid_edges = [edge for edge in edges if edge.get('node') and edge['node'].get('nameWithOwner')]
+    valid_edges = [edge for edge in edges if edge is not None and edge.get('node') and edge['node'].get('nameWithOwner')]
     
     if len(data)-comment_size != len(valid_edges) or force_cache: # If the number of repos has changed, or force_cache is True
         cached = False
@@ -276,12 +276,12 @@ def flush_cache(edges, filename, comment_size):
     with open(filename, 'w') as f:
         f.writelines(data)
         for node in edges:
-            # Check if the node and nameWithOwner exist before accessing
-            if node.get('node') and node['node'].get('nameWithOwner'):
+            # Check if the node exists and has nameWithOwner before accessing
+            if node is not None and node.get('node') and node['node'].get('nameWithOwner'):
                 f.write(hashlib.sha256(node['node']['nameWithOwner'].encode('utf-8')).hexdigest() + ' 0 0 0 0\n')
             else:
                 # Skip invalid nodes or log them for debugging
-                print(f"Warning: Skipping node with missing nameWithOwner: {node}")
+                print(f"Warning: Skipping invalid node: {node}")
 
 
 def add_archive():
@@ -321,7 +321,7 @@ def stars_counter(data):
     """
     total_stars = 0
     for node in data: 
-        if node.get('node') and node['node'].get('stargazers'):
+        if node is not None and node.get('node') and node['node'].get('stargazers'):
             total_stars += node['node']['stargazers']['totalCount']
     return total_stars
 
