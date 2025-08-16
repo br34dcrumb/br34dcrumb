@@ -1,4 +1,5 @@
 import datetime
+from zoneinfo import ZoneInfo
 from dateutil import relativedelta
 import requests
 import os
@@ -465,7 +466,7 @@ if __name__ == '__main__':
     follower_data, follower_time = perf_counter(follower_getter, USER_NAME)
 
     # Update the README.md file with the current date
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    today = datetime.datetime.now(ZoneInfo("Asia/Kolkata").strftime("%Y-%m-%d")
     try:
         with open("README.md", "r", encoding="utf-8") as f:
             lines = f.readlines()
@@ -494,4 +495,5 @@ if __name__ == '__main__':
     print('Total GitHub GraphQL API calls:', '{:>3}'.format(sum(QUERY_COUNT.values())))
 
     for funct_name, count in QUERY_COUNT.items(): print('{:<28}'.format('   ' + funct_name + ':'), '{:>6}'.format(count))
+
 
