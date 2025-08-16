@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "31 5 * * *"  # Runs daily at 05:31 UTC for perfect age updates
+    - cron: "31 18 * * *"  # Runs daily at 12:01 IST for perfect age updates
   workflow_dispatch:
 
 jobs:
