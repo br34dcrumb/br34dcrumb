@@ -18,7 +18,7 @@ svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
 </style>
 <rect width="985px" height="530px" fill="#eff1f5" rx="15"/>
 <text x="15" y="30" fill="#4c4f69" class="ascii">
-<tspan x="15" y="30">╓╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╖</tspan>
+<tspan x="15" y="30">║__/  \     \__/  \     \__/  \     \_║</tspan>
 <tspan x="15" y="50">║     /   __/     /   __/     /   __/ ║</tspan>
 <tspan x="15" y="70">║__   \__/  \__   \__/  \__   \__/  \_║</tspan>
 <tspan x="15" y="90">║  \__/  \     \__/  \     \__/  \    ║</tspan>
@@ -42,7 +42,7 @@ svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
 <tspan x="15" y="450">║  \     \__/  \     \__/  \     \__/ ║</tspan>
 <tspan x="15" y="470">║  /   __/     /   __/     /   __/    ║</tspan>
 <tspan x="15" y="490">║  \__/  \__   \__/  \__   \__/  \__  ║</tspan>
-<tspan x="15" y="510">╙╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╜</tspan>
+<tspan x="15" y="510">║ _/  \     \__/  \     \__/  \     \ ║</tspan>
 </text>
 <text x="390" y="30" fill="#4c4f69">
 <tspan x="390" y="30">- Anikait (br34dcrumb)</tspan> -—————————————————————————————————-—-
